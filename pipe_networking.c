@@ -22,19 +22,19 @@ int server_handshake(int *to_client) {
   //Handshake
   int down_fd;
   char * down_name;
+  int msg = 1;
+  
   read(fd, down_name, sizeof(int));
-  close(fd);
-  
-  to_client = open(down_name, O_WRONLY);
   remove("known");
-  close(to_client);
-
-  open(down_name, O_WRONLY);
-  write(to_client, 1,  4);
-  close(to_client);
   
- 
-  return fd;
+  //set to_client to downstream
+  * to_client = open(down_name, O_WRONLY);
+  write(*to_client, &msg, sizeof(int));
+
+  read(fd, &msg, sizeof(int));
+
+  //WE GOOD
+ return fd;
 }
 
 
@@ -48,20 +48,20 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-  i
-  mkfifo("client");
   
-  int * i = (int *) calloc (sizeof(int));
-  i = to_server;
-
-  
+  mkfifo("client"); // private fifo
+  char* nemo = "client";
+  int msg = 0;
   int up_fd = open("known", O_WRONLY);
-  read(fd[READ], p , sizeof(s));
-  
-  i = up_fd;
+  write(up_fd, nemo, sizeof(nemo));
+
+  int fd = open("client", O_RDONLY);
+  read(fd, &msg, sizeof(int));
+  if(msg == 2){
 
   
-  write();
+ 
+  
 
   
   return 0;
