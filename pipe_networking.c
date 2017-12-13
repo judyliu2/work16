@@ -11,7 +11,30 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-  return 0;
+  //upstream
+  
+  //Setup
+  //make known pipe
+  mkfifo("known");
+  int fd = open("known", O_RDONLY);
+
+
+  //Handshake
+  int down_fd;
+  char * down_name;
+  read(fd, down_name, sizeof(int));
+  close(fd);
+  
+  to_client = open(down_name, O_WRONLY);
+  remove("known");
+  close(to_client);
+
+  open(down_name, O_WRONLY);
+  write(to_client, 1,  4);
+  close(to_client);
+  
+ 
+  return fd;
 }
 
 
@@ -25,5 +48,21 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
+  i
+  mkfifo("client");
+  
+  int * i = (int *) calloc (sizeof(int));
+  i = to_server;
+
+  
+  int up_fd = open("known", O_WRONLY);
+  read(fd[READ], p , sizeof(s));
+  
+  i = up_fd;
+
+  
+  write();
+
+  
   return 0;
 }
