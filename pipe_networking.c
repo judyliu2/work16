@@ -24,11 +24,11 @@ int server_handshake(int *to_client) {
   //Handshake
   //Server recieves client message and removes "well known pipe"
   int down_fd;
-  char * down_name;
+  char down_name[64];
   int msg = 1;
   
-  read(fd, down_name, sizeof( "client"));
-  printf("Server: should receive 'client'\n");
+  read(fd, &down_name,sizeof(down_name));
+  printf("Server: should receive 'cliento'\n");
   printf("Server: received: %s\n",down_name);
   remove("known");
 
@@ -46,7 +46,7 @@ int server_handshake(int *to_client) {
   printf("Server: Message received: %d\n", msg);
   
   //reset
-   close(fd);
+
   printf("Server: closes connection \n");
   //WE GOOD
  return fd;
@@ -66,17 +66,17 @@ int client_handshake(int *to_server) {
 
   //make private FIFO
   
-  mkfifo("client", 0666); 
-  char* nemo = "client";
+  mkfifo("cliento", 0666); 
+  char nemo[64]="cliento";
   printf("Client: create private FIFO\n");
 
   //client connects to server and sends a private FiFO name and waits for server's response
   int msg = 0;
-  int up_fd = open("known", O_WRONLY);
-  write(up_fd, nemo, sizeof(nemo));
+  *to_server = open("known", O_WRONLY);
+  write(*to_server, &nemo, sizeof(nemo));
 
   //client receives message and removes private FiFO
-  int fd = open("client", O_RDONLY);
+  int fd = open("cliento", O_RDONLY);
   read(fd, &msg, sizeof(int));
   printf("Client: Message received: %d\n", msg);
 
@@ -84,8 +84,8 @@ int client_handshake(int *to_server) {
   //client receives message and removes private FiFO
   if(msg == 1){
     msg2 = 3;
-    remove("client");
-    * to_server = open(nemo, O_WRONLY);
+    remove("cliento");
+    open(nemo, O_WRONLY);
     write(*to_server, &msg2, sizeof(int));
     printf("Client: sending: %d\n", msg2);
   }
@@ -96,8 +96,8 @@ int client_handshake(int *to_server) {
   printf("Client: Message received: %d\n", msg);
   
   //reset
-  close(up_fd);
-  close(fd);
+
+
   printf("Client: client exits\n");
   
   return fd;
